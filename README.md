@@ -1,7 +1,9 @@
+[PluralSight Angular + Node Auth](http://www.pluralsight.com/courses/exercise-files/creating-apps-angular-node-token-authentication)
+
 # Scaffolding
 - yo angular
 - grunt serve                               (live reload for changes included)
-- > yo angular:view register          (creates new register.html in `views`)
+- > yo angular:view register        (creates new register.html in `views`)
 - > bower install *angular-ui-router* --save
 
 * *app.config.js*  to define routes
