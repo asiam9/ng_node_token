@@ -44,6 +44,6 @@
 - new /services and *jwt.js* file  -> to create JWT's
 - - Update `newUser.save` to include a token  (jwt encoded)  --  HTTP response now includes this
 - > *yo angular:factory authToken* 
-- 
+- text
 
 
