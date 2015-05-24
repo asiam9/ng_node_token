@@ -40,6 +40,10 @@
 - new User.js in */model* create UserSchema to Hash pass with
 - > npm install bcrypt node-js --save
 - use `UserSchema.pre('save'... )` to setup hash, require User in api.js and edit *newUser* var
-
+- create function **methods.toJSON** to remove password from being displayed in HTTP log 
+- new /services and *jwt.js* file  -> to create JWT's
+- - Update `newUser.save` to include a token  (jwt encoded)  --  HTTP response now includes this
+- > *yo angular:factory authToken* 
+- 
 
 
