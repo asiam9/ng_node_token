@@ -2,19 +2,14 @@
 
 angular.module('authApp')
   .controller('RegisterCtrl',
-    function ($scope, $http, $rootScope, alert) {
+    function ($scope, alert, auth) {
       $scope.submit = function() {
-        var url = 'http://localhost:3000/register';
-        var user = {
-          email: $scope.email,
-          password: $scope.password
-        };
-        $http.post(url, user)
+        auth.register($scope.email, $scope.password)
           .success(function(res) {
-            alert('success', 'Success', 'You are now registered');
+            alert('success', 'Account Created!', 'Welcome, ' + res.user.email);
           })
           .error(function(err) {
             alert('warning', 'Oops ', 'could not register');
           });
-      }
+      };
 });
