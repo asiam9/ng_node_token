@@ -1,13 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var createSendToken = require('./services/jwt.js');
 var jwt = require('jwt-simple');
-var User = require('./models/User.js');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var localStrategy = require('./services/localStrategy.js');
+var jobs = require('./services/jobs.js');
 
 var app = express();
-mongoose.connect('mongodb://localhost/authApp')
 
 app.use(bodyParser.json());
 app.use(passport.initialize());
@@ -17,96 +17,27 @@ passport.serializeUser(function(user, done) {
 });
 
 app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Origin', 'http://localhost');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
 
-var strategyOptions = {
-  usernameField: 'email'
-};
-
-var loginStrategy = new LocalStrategy(strategyOptions, function(email, password, done) {
-  var searchUser = {email: email};
-
-    User.findOne(searchUser, function(err, user) {
-    if (err) return done (err);
-    if (!user)
-      return done(null, false, {
-        message: 'Wrong password/email'
-      });
-
-    user.comparePasswords(password, function(err, isMatch) {
-      if (err) return done (err);
-
-      if (!isMatch)
-        return done(null, false, {
-          message: 'Wrong password/email'
-        });
-
-      return done(null, user);
-    });
-  });
-});
-
-var registerStrategy = new LocalStrategy(strategyOptions, function(email, password, done) {
-  var user = req.body;
-  var newUser = new User({
-    email: email,
-    password: password
-  });
-  newUser.save(function(err) {
-    done(null, newUser);
-  });
-});
-
-passport.use('local-register', registerStrategy);
-passport.use('local-login', loginStrategy);
+passport.use('local-register', localStrategy.register);
+passport.use('local-login', localStrategy.login);
 
 app.post('/register', passport.authenticate('local-register'), function(req, res) {
-    createSendToken(req.user, res);
+  createSendToken(req.user, res);
 });
 
 app.post('/login', passport.authenticate('local-login'), function(req, res) {
-      createSendToken(req.user, res);
+  createSendToken(req.user, res);
 });
 
-function createSendToken(user, res) {
-  var payload = {
-    sub: user.id
-  }
-  var token = jwt.encode(payload, 'shhh...');
-  res.status(200).send({
-    user: user.toJSON(),
-    token: token
-  });
-}
+app.get('/jobs', jobs);
 
-var jobs = [
-  'Cook',
-  'Superhero',
-  'unicorn whisperer'
-]
-
-app.get('/jobs', function(req, res) {
-  if (!req.headers.authorization) {
-    return res.status(401).send({
-      message: 'You are not authorized '
-    });
-  }
-
-  var token = req.headers.authorization.split(' ')[1];
-  var payload = jwt.decode(token, "shhh...");
-
-  if (!payload.sub) {
-    res.status(401).send({
-      message: 'Authentication failed'
-    });
-  }
-  res.json(jobs);
-});
-
+mongoose.connect('mongodb://localhost/authApp')
 
 var server = app.listen(3000, function() {
   console.log('API listening on ', server.address().port);

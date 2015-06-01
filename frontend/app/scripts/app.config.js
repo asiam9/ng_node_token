@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('authApp')
-  .config(function($urlRouterProvider, $stateProvider, $httpProvider) {
+  .config(function($urlRouterProvider, $stateProvider, $httpProvider, $authProvider, API_URL) {
 
     $urlRouterProvider.otherwise('/');
 
@@ -33,6 +33,16 @@ angular.module('authApp')
       url: '/logout',
       controller: 'LogoutCtrl'
     });
+
+    //$authProvider.loginUrl = API_URL + 'auth/login';
+    //$authProvider.signupUrl = API_URL + 'auth/register';
+
+    $authProvider.google({
+      clientId: '287005111404-pt1orn541eqk5enev4424ihmmvk5e2vf.apps.googleusercontent.com',
+      url: API_URL + 'auth/google'
+    })
+
     $httpProvider.interceptors.push('authInterceptor');
+
   })
   .constant('API_URL', 'http://localhost:3000/');

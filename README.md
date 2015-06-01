@@ -6,6 +6,8 @@
 - > yo angular:view register        (creates new register.html in `views`)
 - > bower install *angular-ui-router* --save
 
+- Google API  =  contacts, G+        Origins/Redirect = http://localhost:9000
+
 * *app.config.js*  to define routes
 * replace ng-controller="MainCtrl" with <div ui-view></div>
 * change href to *ui-sref="register"* 
@@ -74,4 +76,8 @@
 - add Register controller, update auth.js
 - npm install *passport* --save   +  passport-local
 - add app.use, passport.serializeUser and LocalStrategy in api.js
+
+## Satellizer
+- bower install satellizer --save
+- add $authProvider to config and 'satellizer' to app.js
 
